@@ -1,10 +1,3 @@
-// #pragma once
-// /*
-// variables
-// */
-
-
-
 // wifi
 bool wifi_connected = false;
 bool mqtt_connected = false;
@@ -63,3 +56,33 @@ char charging[5];
   unsigned long aux_pushbutton_interval;
   unsigned long press_time, released;
 #endif
+
+
+// dehumidifier related variables:
+
+u_int8_t q8           = 0;
+u_int8_t q9           = 0;
+u_int8_t q10          = 0;
+
+u_int8_t anode_1      = 0;
+u_int8_t anode_2      = 0;
+u_int8_t anode_3      = 0;
+u_int8_t anode_4      = 0;
+u_int8_t anode_5      = 0;
+
+u_int32_t anodes      = 222222;     // initial fake state
+u_int32_t anodes_old  = 111111;     // initial fake state
+
+float q8_volt,q9_volt,q10_volt;
+float anode_1_volt,anode_2_volt,anode_3_volt,anode_4_volt,anode_5_volt;
+
+char fan_speed[10];
+char work_mode[10];
+
+char anodes_char[255];
+char anodes_volts[255];
+
+char q_char[255];
+char q_volts[255];
+
+char dehum_power[4];

@@ -8,12 +8,12 @@ config
 // ---------------------------------------------------------------------------------------------------
 
 #if DEVICE_ID == 40
-  #define BOARD_TYPE                2
+  #define BOARD_TYPE                2 //1-esp32, 2-esp32s2
   #define HOSTNAME                  "esp32040"
   #define ROLE_NAME                 "Dehumidifier"
   
-  #define USE_MAX17048              1
-  #define PUBLISH_BATPERCENT        0
+  #define USE_MAX17048              1 // 0 if not in use
+  #define PUBLISH_BATPERCENT        0 // 0 if not in use
   // #define CHARGING_GPIO            39  // comment out if not in use - don't use "0" here
   // #define POWER_GPIO               38  // comment out if not in use - don't use "0" here
   #define STATUS_GW_LED_GPIO_RED    5  // on event - check which one is better
@@ -23,6 +23,7 @@ config
   #define PUSH_BUTTON_GPIO          0  // to control ESP
   #define PUSH_BUTTON_GPIO_ACT    LOW  // HIGH or LOW, HIGH = 1, LOW = 0, 0 if not defined (so default)
 
+  // digital GPIO for buttons 
   #define BUTTON_POWER_GPIO         21
   #define BUTTON_FAN_GPIO           26
   #define BUTTON_MODE_GPIO          33
@@ -31,16 +32,20 @@ config
   #define BUTTON_ION_GPIO           36
 
   
-  #define GPIO_VOLT_ITERATIONS      1000
-  #define BUTTON_PRESS_TIME_MS      100
+  #define GPIO_VOLT_ITERATIONS      1000    // LEDs are controlled by PWM so not easy to get proper HIGH/LOW reference
+  #define BUTTON_PRESS_TIME_MS      100     // debounce
 
+  // reference voltages
   #define Q_VOLTAGE_LEVEL           2.0f
   #define ANODE_VOLTAGE_LEVEL       1.3f
 
+  // analogue GPIOs:
+  // GPIO for transistors delivering GND to cathodes
   #define Q8_GPIO                   11
   #define Q9_GPIO                   12
   #define Q10_GPIO                  13
   
+  // GPIO for anodes
   #define ANODE_1_GPIO              1
   #define ANODE_2_GPIO              2
   #define ANODE_3_GPIO              4
@@ -48,7 +53,7 @@ config
   #define ANODE_5_GPIO              10
 
 
-  #pragma message "compilation for: ESPnow_esp32093-ups-test"
+  #pragma message "compilation for: ESPnow_esp32040-dehumidifier controller"
 // ---------------------------------------------------------------------------------------------------
 
 
@@ -70,10 +75,10 @@ config
 #define MAX_MQTT_ERROR              15  // in seconds / times
 
 // how often to update HA on GW status
-#define HEARTBEAT_INTERVAL_S        30    //10 in seconds
+#define HEARTBEAT_INTERVAL_S        60    // in seconds
 
 // how often to update HA on GW battery
-#define VOLTS_INTERVAL_S            3 // HEARTBEAT_INTERVAL_S // in seconds
+#define VOLTS_INTERVAL_S            HEARTBEAT_INTERVAL_S // in seconds
 
 // push button
 #define PUSHBUTTON_UPDATE_INTERVAL_MS     100    // in ms
@@ -87,7 +92,7 @@ config
   #define POWER_ON_LED_MAX_DC         255
 #endif
 
-// assigning MODEL, FW file name and checking if proper board is selected (only Arduino)
+// assigning MODEL
 #define PRINT_COMPILER_MESSAGES // comment out to disable messages in precompiler
 #ifndef BOARD_TYPE
   #error BOARD_TYPE not defined
@@ -110,30 +115,26 @@ config
     #ifdef PRINT_COMPILER_MESSAGES
       #pragma message "chosen BOARD_TYPE = ESP32"
     #endif
-    // #define FW_BIN_FILE "ups-battery-sensor.ino.esp32.bin"
   #elif (BOARD_TYPE == 2)
     #define MODEL "ESP32S2"
     #ifdef PRINT_COMPILER_MESSAGES
       #pragma message "chosen BOARD_TYPE = ESP32S2"
     #endif
-    // #define FW_BIN_FILE "ups-battery-sensor.ino.esp32s2.bin"
   #elif (BOARD_TYPE == 3)
     #define MODEL "ESP32S3"
     #ifdef PRINT_COMPILER_MESSAGES
       #pragma message "chosen BOARD_TYPE = ESP32S3"
     #endif
-    // #define FW_BIN_FILE "ups-battery-sensor.ino.esp32s3.bin"
   #elif (BOARD_TYPE == 4)
     #define MODEL "ESP32C3"
     #ifdef PRINT_COMPILER_MESSAGES
       #pragma message "chosen BOARD_TYPE = ESP32C3"
     #endif
-    // #define FW_BIN_FILE "ups-battery-sensor.ino.esp32c3.bin"
   #else
     #error BOARD_TYPE not defined
   #endif
 
 
 #endif
-// assigning MODEL, FW file name and checking if proper board is selected END
+// assigning MODEL END
 
