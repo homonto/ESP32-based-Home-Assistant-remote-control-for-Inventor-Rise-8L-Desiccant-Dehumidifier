@@ -1,13 +1,15 @@
-Modified "Inventor Rise 8L Desiccant Dehumidifier with Ioniser (WEE/MM0449AA)" to have remote control over Home Assistant 
+Modified "Inventor Rise 8L Desiccant Dehumidifier with Ioniser (WEE/MM0449AA)" to have remote control over Home Assistant.
+This device is without any remote control so we decided to implement some and to make it fully controllable from HA.
 
 In current version working are:
 - turn ON/OFF
 - switch Modes (ECO, NORMAL, HIGH, TURBO)
 - switch Fan Speeds (LOW, MEDIUM, HIGH)
 
-MQTT with discovery
+MQTT with discovery so there is no need to configure anything on Home Assistant.
+WiFi credentials to be set up on first run via Captive Portal.
 
-Still beta version as not everything yet implemented - TODO:
+Still beta version as not everything is yet implemented - TODO:
 - swing
 - ion
 - timer
