@@ -1,0 +1,24 @@
+2022-12-12
+    0.4.0   -   captive portal instead of wifi
+            -   IP from DHCP
+            -   DEVICE_ID choosing in platformio.ini
+
+2022-12-02
+    0.3.0   -   remove channel and fixed IP from wifi
+            -   added hostname so device can be reached on hostname.local
+    
+2022-11-10
+    0.2.2   -   corrections in functions when USE_MAX17048 is not in use
+            -   added ESP32S
+    0.2.1   -   push button with SimpleButton.h
+                working:
+                    short click < 3s - nothing
+                    3s > x > 6s click - restart
+                    6s > x > 9s click - FW upgrade
+                    > 9s - nothing yet
+2022-11-09
+    0.2.0   -   beginning, push button:
+                working:
+                    short click - FW upgrade
+                    3s > x > 6s click - restart
+                    > 6s - nothing yet
