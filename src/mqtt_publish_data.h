@@ -507,6 +507,7 @@ void heartbeat()
   publish_status = publish_status && mqtt_publish_gw_status_values("online");
   publish_status = publish_status && mqtt_publish_button_update_config();
   publish_status = publish_status && mqtt_publish_button_restart_config();
+  publish_status = publish_status && mqtt_publish_config_all_buttons();
 
   if (publish_status)
   {
@@ -1011,4 +1012,98 @@ bool mqtt_publish_text_sensor_values(const char* sensor, const char* value)
 
     return true;
     
+}
+
+bool mqtt_publish_config_all_buttons()
+{
+  bool total_publish_status = true;
+  // publish power button config
+  Serial.printf("[%s]: mqtt_publish_button_config (power) in HA:...",__func__);
+  if (mqtt_publish_button_config("power"))
+  {
+      Serial.printf("done\n");
+  } else
+  {
+      Serial.printf("FAILED\n");
+      total_publish_status = false;
+  }
+
+  // publish fan button config
+  Serial.printf("[%s]: mqtt_publish_button_config (fan) in HA:...",__func__);
+  if (mqtt_publish_button_config("fan"))
+  {
+      Serial.printf("done\n");
+  } else
+  {
+      Serial.printf("FAILED\n");
+      total_publish_status = false;
+  }
+
+  // publish mode button config
+  Serial.printf("[%s]: mqtt_publish_button_config (mode) in HA:...",__func__);
+  if (mqtt_publish_button_config("mode"))
+  {
+      Serial.printf("done\n");
+  } else
+  {
+      Serial.printf("FAILED\n");
+      total_publish_status = false;
+  }
+
+  // publish swing button config
+  Serial.printf("[%s]: mqtt_publish_button_config (swing) in HA:...",__func__);
+  if (mqtt_publish_button_config("swing"))
+  {
+      Serial.printf("done\n");
+  } else
+  {
+      Serial.printf("FAILED\n");
+      total_publish_status = false;
+  }
+
+  // publish timer button config
+  Serial.printf("[%s]: mqtt_publish_button_config (timer) in HA:...",__func__);
+  if (mqtt_publish_button_config("timer"))
+  {
+      Serial.printf("done\n");
+  } else
+  {
+      Serial.printf("FAILED\n");
+      total_publish_status = false;
+  }
+
+  // publish ion button config
+  Serial.printf("[%s]: mqtt_publish_button_config (ion) in HA:...",__func__);
+  if (mqtt_publish_button_config("ion"))
+  {
+      Serial.printf("done\n");
+  } else
+  {
+      Serial.printf("FAILED\n");
+      total_publish_status = false;
+  }
+
+  // publish work_mode config
+  Serial.printf("[%s]: mqtt_publish_text_sensor_config (work_mode) in HA:...",__func__);
+  if (mqtt_publish_text_sensor_config("work_mode"))
+  {
+      Serial.printf("done\n");
+  } else
+  {
+      Serial.printf("FAILED\n");
+      total_publish_status = false;
+  }
+
+  // publish fan_speed config
+  Serial.printf("[%s]: mqtt_publish_text_sensor_config (fan_speed) in HA:...",__func__);
+  if (mqtt_publish_text_sensor_config("fan_speed"))
+  {
+      Serial.printf("done\n");
+  } else
+  {
+      Serial.printf("FAILED\n");
+      total_publish_status = false;
+  }
+
+  return total_publish_status;
 }

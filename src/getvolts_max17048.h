@@ -8,8 +8,13 @@ void measure_volts()
   #if (USE_MAX17048 == 1)
     bool debug_mode = false;
     snprintf(bat_volts,sizeof(bat_volts),"%0.2f",lipo.getVoltage());
-    snprintf(bat_percent,sizeof(bat_percent),"%0.2f",lipo.getSOC());
-    snprintf(bat_chr,sizeof(bat_chr),"%0.2f",lipo.getChangeRate());
+    #if (PUBLISH_BATPERCENT == 1)
+      snprintf(bat_percent,sizeof(bat_percent),"%0.2f",lipo.getSOC());
+      snprintf(bat_chr,sizeof(bat_chr),"%0.2f",lipo.getChangeRate());
+    #else
+      snprintf(bat_percent,sizeof(bat_percent),"%s","N/A");
+      snprintf(bat_chr,sizeof(bat_chr),"%s","N/A");
+    #endif
     if (max17ok)
     {
         if (debug_mode)

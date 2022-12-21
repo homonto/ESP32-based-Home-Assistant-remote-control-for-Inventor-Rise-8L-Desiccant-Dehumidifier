@@ -13,6 +13,7 @@ config
   #define ROLE_NAME                 "Dehumidifier"
   
   #define USE_MAX17048              1
+  #define PUBLISH_BATPERCENT        0
   // #define CHARGING_GPIO            39  // comment out if not in use - don't use "0" here
   // #define POWER_GPIO               38  // comment out if not in use - don't use "0" here
   #define STATUS_GW_LED_GPIO_RED    5  // on event - check which one is better
@@ -29,18 +30,22 @@ config
   #define BUTTON_TIMER_GPIO         35
   #define BUTTON_ION_GPIO           36
 
-  #define Q_VOLTAGE_LEVEL       2.0f
-  #define ANODE_VOLTAGE_LEVEL   1.3f
-
-  #define Q8_GPIO       11
-  #define Q9_GPIO       12
-  #define Q10_GPIO      13
   
-  #define ANODE_1_GPIO  1
-  #define ANODE_2_GPIO  2
-  #define ANODE_3_GPIO  4
-  #define ANODE_4_GPIO  7
-  #define ANODE_5_GPIO  10
+  #define GPIO_VOLT_ITERATIONS      1000
+  #define BUTTON_PRESS_TIME_MS      100
+
+  #define Q_VOLTAGE_LEVEL           2.0f
+  #define ANODE_VOLTAGE_LEVEL       1.3f
+
+  #define Q8_GPIO                   11
+  #define Q9_GPIO                   12
+  #define Q10_GPIO                  13
+  
+  #define ANODE_1_GPIO              1
+  #define ANODE_2_GPIO              2
+  #define ANODE_3_GPIO              4
+  #define ANODE_4_GPIO              7
+  #define ANODE_5_GPIO              10
 
 
   #pragma message "compilation for: ESPnow_esp32093-ups-test"
@@ -68,7 +73,7 @@ config
 #define HEARTBEAT_INTERVAL_S        30    //10 in seconds
 
 // how often to update HA on GW battery
-#define VOLTS_INTERVAL_S            HEARTBEAT_INTERVAL_S // in seconds
+#define VOLTS_INTERVAL_S            3 // HEARTBEAT_INTERVAL_S // in seconds
 
 // push button
 #define PUSHBUTTON_UPDATE_INTERVAL_MS     100    // in ms

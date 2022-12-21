@@ -2,7 +2,7 @@
 
 // chosing devices moved to platformio.ini
 
-#define ZH_VERSION "0.5.0"
+#define ZH_VERSION "0.6.0"
 #define OTA_ACTIVE
 #define MQTT_DEVICE_IDENTIFIER String(WiFi.macAddress())
 
@@ -52,6 +52,7 @@ bool mqtt_publish_gw_status_values(const char* status);
 void hearbeat();
 bool mqtt_publish_sensors_config();
 bool mqtt_publish_sensors_values();
+bool mqtt_publish_config_all_buttons();
 
 // measure volts and charing - getvolts_max17048.h
 void measure_volts();
@@ -101,14 +102,20 @@ u_int32_t anodes      = 222222;     // initial fake state
 u_int32_t anodes_old  = 111111;     // initial fake state
 
 float q8_volt,q9_volt,q10_volt;
+float anode_1_volt,anode_2_volt,anode_3_volt,anode_4_volt,anode_5_volt;
 
-#define GPIO_VOLT_ITERATIONS 1000
+
 
 char fan_speed[10];
 char work_mode[10];
+
 char anodes_char[255];
+char anodes_volts[255];
+
 char q_char[255];
 char q_volts[255];
+
+char dehum_power[4];
 
 void prepare_gpio()
 {
@@ -135,28 +142,6 @@ void prepare_gpio()
   digitalWrite(BUTTON_SWING_GPIO,HIGH);
   digitalWrite(BUTTON_TIMER_GPIO,HIGH);
   digitalWrite(BUTTON_ION_GPIO,HIGH);
-
-  // pinMode(Q8_GPIO,INPUT_PULLUP);
-  // pinMode(Q9_GPIO,INPUT_PULLUP);
-  // pinMode(Q10_GPIO,INPUT_PULLUP);
-
-  // pinMode(ANODE_1_GPIO,INPUT_PULLUP);
-  // pinMode(ANODE_2_GPIO,INPUT_PULLUP);
-  // pinMode(ANODE_3_GPIO,INPUT_PULLUP);
-  // pinMode(ANODE_4_GPIO,INPUT_PULLUP);
-  // pinMode(ANODE_5_GPIO,INPUT_PULLUP);
-
-
-
-  // pinMode(Q8_GPIO,INPUT_PULLDOWN);
-  // pinMode(Q9_GPIO,INPUT_PULLDOWN);
-  // pinMode(Q10_GPIO,INPUT_PULLDOWN);
-
-  // pinMode(ANODE_1_GPIO,INPUT_PULLDOWN);
-  // pinMode(ANODE_2_GPIO,INPUT_PULLDOWN);
-  // pinMode(ANODE_3_GPIO,INPUT_PULLDOWN);
-  // pinMode(ANODE_4_GPIO,INPUT_PULLDOWN);
-  // pinMode(ANODE_5_GPIO,INPUT_PULLDOWN);
 }
 
 u_int8_t check_led_status(u_int8_t gpio)
@@ -180,6 +165,11 @@ u_int8_t check_led_status(u_int8_t gpio)
   } else 
   {
     voltage_thr = ANODE_VOLTAGE_LEVEL;
+    if (gpio == ANODE_1_GPIO) anode_1_volt = volts;
+    if (gpio == ANODE_2_GPIO) anode_2_volt = volts;
+    if (gpio == ANODE_3_GPIO) anode_3_volt = volts;
+    if (gpio == ANODE_4_GPIO) anode_4_volt = volts;
+    if (gpio == ANODE_5_GPIO) anode_5_volt = volts;
   }
   
   if (volts>voltage_thr) status=1; else status=0;
@@ -270,15 +260,28 @@ void check_modes()
 
 
   snprintf(anodes_char,sizeof(anodes_char),"Anodes=%d: a1=%d, a2=%d, a3=%d, a4=%d, a5=%d",anodes,anode_1,anode_2,anode_3,anode_4,anode_5);
+  snprintf(anodes_volts,sizeof(anodes_volts),"a1=%0.2fV, a2=%0.2fV, a3=%0.2fV, a4=%0.2fV, a5=%0.2fV",anode_1_volt,anode_2_volt,anode_3_volt,anode_4_volt,anode_5_volt);
+
+
   snprintf(q_char,sizeof(q_char),"Qs: q8=%d, q9=%d, q10=%d",q8,q9,q10);
-
   snprintf(q_volts,sizeof(q_volts),"q8=%0.2fV, q9=%0.2fV, q10=%0.2fV",q8_volt,q9_volt,q10_volt);
+  
 
-  mqtt_publish_text_sensor_values("anodes", anodes_char);
-  mqtt_publish_text_sensor_values("qs", q_char);
-  mqtt_publish_text_sensor_values("qv", q_volts);
+  mqtt_publish_text_sensor_values("a_state", anodes_char);
+  mqtt_publish_text_sensor_values("a_volts", anodes_volts);
+
+  mqtt_publish_text_sensor_values("q_state", q_char);
+  mqtt_publish_text_sensor_values("q_volts", q_volts);
 
 
+  if (anodes > 0)
+  {
+    snprintf(dehum_power,sizeof(dehum_power),"%s","ON");
+  } else 
+  {
+    snprintf(dehum_power,sizeof(dehum_power),"%s","OFF");
+  }
+  mqtt_publish_text_sensor_values("dehum_power", dehum_power);
 
 
   Serial.println("------------ E N D ----------\n");
@@ -289,7 +292,7 @@ void press_button(u_int8_t gpio)
   Serial.printf("[%s]: Pressing GPIO=%d, ",__func__,gpio);
   digitalWrite(gpio,0);
   Serial.printf("delay for 100ms...");
-  delay(100);
+  delay(BUTTON_PRESS_TIME_MS);
   Serial.printf("releasing GPIO=%d\n",gpio);
   digitalWrite(gpio,1);
 }
@@ -468,85 +471,6 @@ void setup()
     ESP.restart();
   }
 
-  // publish power button config
-  Serial.printf("[%s]: mqtt_publish_button_config (power) in HA:...",__func__);
-  if (mqtt_publish_button_config("power"))
-  {
-      Serial.printf("done\n");
-  } else
-  {
-      Serial.printf("FAILED\n");
-  }
-
-  // publish fan button config
-  Serial.printf("[%s]: mqtt_publish_button_config (fan) in HA:...",__func__);
-  if (mqtt_publish_button_config("fan"))
-  {
-      Serial.printf("done\n");
-  } else
-  {
-      Serial.printf("FAILED\n");
-  }
-
-  // publish mode button config
-  Serial.printf("[%s]: mqtt_publish_button_config (mode) in HA:...",__func__);
-  if (mqtt_publish_button_config("mode"))
-  {
-      Serial.printf("done\n");
-  } else
-  {
-      Serial.printf("FAILED\n");
-  }
-
-  // publish swing button config
-  Serial.printf("[%s]: mqtt_publish_button_config (swing) in HA:...",__func__);
-  if (mqtt_publish_button_config("swing"))
-  {
-      Serial.printf("done\n");
-  } else
-  {
-      Serial.printf("FAILED\n");
-  }
-
-  // publish timer button config
-  Serial.printf("[%s]: mqtt_publish_button_config (timer) in HA:...",__func__);
-  if (mqtt_publish_button_config("timer"))
-  {
-      Serial.printf("done\n");
-  } else
-  {
-      Serial.printf("FAILED\n");
-  }
-
-  // publish ion button config
-  Serial.printf("[%s]: mqtt_publish_button_config (ion) in HA:...",__func__);
-  if (mqtt_publish_button_config("ion"))
-  {
-      Serial.printf("done\n");
-  } else
-  {
-      Serial.printf("FAILED\n");
-  }
-
-  // publish work_mode config
-  Serial.printf("[%s]: mqtt_publish_text_sensor_config (work_mode) in HA:...",__func__);
-  if (mqtt_publish_text_sensor_config("work_mode"))
-  {
-      Serial.printf("done\n");
-  } else
-  {
-      Serial.printf("FAILED\n");
-  }
-
-  // publish fan_speed config
-  Serial.printf("[%s]: mqtt_publish_text_sensor_config (fan_speed) in HA:...",__func__);
-  if (mqtt_publish_text_sensor_config("fan_speed"))
-  {
-      Serial.printf("done\n");
-  } else
-  {
-      Serial.printf("FAILED\n");
-  }
 
   // initial status of DEVICE:
   if (mqtt_publish_gw_status_values("STARTING"))
