@@ -1,4 +1,4 @@
-Modified "Inventor Rise 8L Desiccant Dehumidifier with Ioniser (WEE/MM0449AA)" to have remote control over Home Assistant.
+Modified "Inventor Rise 8L Desiccant Dehumidifier with Ioniser (WEE/MM0449AA)" to have remote control from Home Assistant.
 This device is without any remote control so we decided to implement some and to make it fully controllable from HA.
 
 In current version working are:
