@@ -3,6 +3,9 @@ TODO:
 - timers
 - swing
 
+2022-12-26
+    0.6.1   -   check_modes(bool force) - force mode updates even if status is the same as before
+
 2022-12-21
     0.6.0   -   basic stuff working: 
                 - switching fan and modes

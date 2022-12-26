@@ -2,7 +2,9 @@
 
 // chosing devices moved to platformio.ini
 
-#define ZH_VERSION "0.6.0"
+// #define DEBUG       // it sends also othe info to HA
+
+#define ZH_VERSION "0.6.1"
 #define OTA_ACTIVE
 #define MQTT_DEVICE_IDENTIFIER String(WiFi.macAddress())
 
@@ -61,7 +63,7 @@ void charging_state();
 // new functions for dehumidifier
 void prepare_gpio();
 u_int8_t check_led_status(u_int8_t gpio);
-void check_modes();
+void check_modes(bool force);
 void press_button(u_int8_t gpio);
 bool mqtt_publish_button_config(const char* button);
 bool mqtt_publish_text_sensor_config(const char* sensor);
@@ -144,7 +146,8 @@ u_int8_t check_led_status(u_int8_t gpio)
   return status;
 }
 
-void check_modes()
+// in force mode update even if status is the same as before
+void check_modes(bool force)
 {
   anodes_old = anodes;
 
@@ -160,7 +163,10 @@ void check_modes()
 
   anodes = anode_1 + (2 * anode_2) + (4 * anode_3) + (8 * anode_4) + (16 * anode_5); 
 
-  if (anodes == anodes_old) return;
+  if (force == false)
+  {
+    if (anodes == anodes_old) return;
+  }
 
   
   Serial.printf("[%s]: Qs: q8=%d, q9=%d, q10=%d\n",__func__,q8,q9,q10);
@@ -225,19 +231,21 @@ void check_modes()
   mqtt_publish_text_sensor_values("fan_speed", fan_speed);
 
 
-  snprintf(anodes_char,sizeof(anodes_char),"Anodes=%d: a1=%d, a2=%d, a3=%d, a4=%d, a5=%d",anodes,anode_1,anode_2,anode_3,anode_4,anode_5);
-  snprintf(anodes_volts,sizeof(anodes_volts),"a1=%0.2fV, a2=%0.2fV, a3=%0.2fV, a4=%0.2fV, a5=%0.2fV",anode_1_volt,anode_2_volt,anode_3_volt,anode_4_volt,anode_5_volt);
+  #ifdef DEBUG
 
+    snprintf(anodes_char,sizeof(anodes_char),"Anodes=%d: a1=%d, a2=%d, a3=%d, a4=%d, a5=%d",anodes,anode_1,anode_2,anode_3,anode_4,anode_5);
+    snprintf(anodes_volts,sizeof(anodes_volts),"a1=%0.2fV, a2=%0.2fV, a3=%0.2fV, a4=%0.2fV, a5=%0.2fV",anode_1_volt,anode_2_volt,anode_3_volt,anode_4_volt,anode_5_volt);
 
-  snprintf(q_char,sizeof(q_char),"Qs: q8=%d, q9=%d, q10=%d",q8,q9,q10);
-  snprintf(q_volts,sizeof(q_volts),"q8=%0.2fV, q9=%0.2fV, q10=%0.2fV",q8_volt,q9_volt,q10_volt);
-  
+    snprintf(q_char,sizeof(q_char),"Qs: q8=%d, q9=%d, q10=%d",q8,q9,q10);
+    snprintf(q_volts,sizeof(q_volts),"q8=%0.2fV, q9=%0.2fV, q10=%0.2fV",q8_volt,q9_volt,q10_volt);
+    
 
-  mqtt_publish_text_sensor_values("a_state", anodes_char);
-  mqtt_publish_text_sensor_values("a_volts", anodes_volts);
+    mqtt_publish_text_sensor_values("a_state", anodes_char);
+    mqtt_publish_text_sensor_values("a_volts", anodes_volts);
 
-  mqtt_publish_text_sensor_values("q_state", q_char);
-  mqtt_publish_text_sensor_values("q_volts", q_volts);
+    mqtt_publish_text_sensor_values("q_state", q_char);
+    mqtt_publish_text_sensor_values("q_volts", q_volts);
+  #endif
 
 
   if (anodes > 0)
@@ -452,7 +460,7 @@ void setup()
   }
 
   // initial status
-  check_modes();  
+  check_modes(true);  
 
   // initial heartbeat
   heartbeat();
@@ -573,8 +581,7 @@ void loop()
       ledcWrite(POWER_ON_LED_PWM_CHANNEL, POWER_ON_LED_DC);
     #endif
 
-    // press_button(BUTTON_FAN_GPIO);
-    // check_modes();  
+    check_modes(true);  
     aux_heartbeat_interval = millis();
   }
 
@@ -603,7 +610,7 @@ void loop()
   #endif
   do_update();
 
-  check_modes();  
+  check_modes(false);  
 
 
 }
