@@ -4,7 +4,7 @@
 
 // #define DEBUG       // it sends also othe info to HA
 
-#define ZH_VERSION "0.6.1"
+#define ZH_VERSION "0.7.0"
 #define OTA_ACTIVE
 #define MQTT_DEVICE_IDENTIFIER String(WiFi.macAddress())
 

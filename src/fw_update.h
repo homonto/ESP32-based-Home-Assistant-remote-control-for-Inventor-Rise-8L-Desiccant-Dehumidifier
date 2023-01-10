@@ -112,7 +112,7 @@ int update_firmware_prepare()
   long start_upgrade_time = millis();
 
   char firmware_file[255];
-  snprintf(firmware_file,sizeof(firmware_file),"%s/01-Production/ups-battery/firmware/%s.bin",UPDATE_FIRMWARE_HOST,HOSTNAME);
+  snprintf(firmware_file,sizeof(firmware_file),"%s/01-Production/ESP32/firmware/%s.bin",UPDATE_FIRMWARE_HOST,HOSTNAME);
 
   fw_totalLength=0;
   fw_currentLength=0;
