@@ -84,7 +84,7 @@ bool mqtt_publish_gw_status_config()
   config["uniq_id"] = mac_name;
   config["frc_upd"] = "true";
   config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 60;
+  // config["exp_aft"] = 60;
 
   CREATE_GW_MQTT_DEVICE
 
@@ -125,7 +125,7 @@ bool mqtt_publish_gw_status_config()
   config["val_tpl"] = "{{value_json.status}}";
   config["frc_upd"] = "true";
   config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 60;
+  // config["exp_aft"] = 60;
 
   CREATE_GW_MQTT_DEVICE
 
@@ -167,7 +167,7 @@ bool mqtt_publish_gw_status_config()
   config["val_tpl"] = "{{value_json.uptime}}";
   config["frc_upd"] = "true";
   config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 60;
+  // config["exp_aft"] = 60;
 
   CREATE_GW_MQTT_DEVICE
 
@@ -209,7 +209,7 @@ bool mqtt_publish_gw_status_config()
   config["val_tpl"] = "{{value_json.version}}";
   config["frc_upd"] = "true";
   config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 60;
+  // config["exp_aft"] = 60;
 
   CREATE_GW_MQTT_DEVICE
 
@@ -384,7 +384,7 @@ bool mqtt_publish_button_update_config()
   config["retain"] = "true";
   config["uniq_id"] = update_name;
   config["val_tpl"] = "{{value_json.update}}";
-  config["exp_aft"] = 60;
+  // config["exp_aft"] = 60;
 
   CREATE_GW_MQTT_DEVICE
 
@@ -457,7 +457,7 @@ bool mqtt_publish_button_restart_config()
   config["retain"] = "true";
   config["uniq_id"] = restart_name;
   config["val_tpl"] = "{{value_json.restart}}";
-  config["exp_aft"] = 60;
+  // config["exp_aft"] = 60;
 
   CREATE_GW_MQTT_DEVICE
 
