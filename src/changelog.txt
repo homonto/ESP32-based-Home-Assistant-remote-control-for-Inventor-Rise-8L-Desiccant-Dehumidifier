@@ -3,6 +3,9 @@ TODO:
 - timers
 - swing
 
+2023-02-27
+    0.8.0   -   all MQTT not retained
+
 2023-01-10
     0.7.0   -   update server: /01-Production/ESP32/firmware   
 
